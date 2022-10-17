@@ -8,7 +8,7 @@ dotenv.config({
   path: `${isProd ? `.env.${NODE_ENV}` : `.env`}`,
 });
 
-const siteUrl = process.env.SITE_URL;
+const siteUrl = process.env.SITE_URL || "http://localhost:8000";
 const isKillServiceWorker = process.env.SERVICE_WORKER_KILL_SWITCH == `true`;
 
 const plugins = [
