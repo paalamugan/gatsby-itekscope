@@ -16,7 +16,6 @@ interface GalleryQueryProps {
 }
 
 const GalleryPage: React.FC<PageProps<GalleryQueryProps>> = ({ data, location }) => {
-  const tag = new URL(location.href).searchParams.get("tag") || "all";
   const { allImage, vectorImage, websiteImage, softwareImage, embroideryImage } = data;
 
   const mappingGallery = useMemo(
@@ -31,6 +30,12 @@ const GalleryPage: React.FC<PageProps<GalleryQueryProps>> = ({ data, location })
   );
 
   const [tabIndex, setTabIndex] = React.useState(0);
+  const [tag, setTag] = React.useState("all");
+
+  useEffect(() => {
+    const tag = new URL(location.href).searchParams.get("tag") || "all";
+    setTag(tag);
+  }, []);
 
   useEffect(() => {
     const findIndex = GALLERY_LISTS.findIndex(list => list.id === tag);
