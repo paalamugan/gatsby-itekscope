@@ -1,10 +1,12 @@
-import type { FC } from "react";
 import React, { useMemo, useState } from "react";
-import { Box, Button, Flex, Heading, Link, Stack } from "@chakra-ui/react";
-import { GatsbyImage, IGatsbyImageData } from "gatsby-plugin-image";
+import type { FC } from "react";
+import { Button, Flex, Stack } from "@chakra-ui/react";
+import { IGatsbyImageData } from "gatsby-plugin-image";
 import { GALLERY_LIMIT } from "../../constants";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
+import NoDataFound from "../NoDataFound";
+import GalleryGridItem from "./GalleryGridItem";
 
 export interface GalleryGridProps {
   gridColumn?: number;
@@ -24,32 +26,6 @@ const range = (length: number): Array<number> => {
   return Array.from({ length: length }, (_, i) => i);
 };
 
-interface GalleryGridItemProps {
-  edge: GalleryGridProps["image"]["edges"][0];
-}
-
-const GalleryGridItem: FC<GalleryGridItemProps> = ({ edge }) => {
-  const image = edge.node.childImageSharp?.gatsbyImageData;
-  const alt = edge.node.name;
-  if (!image) return null;
-  return (
-    <motion.div
-      initial={{ y: 10, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      exit={{ y: -10, opacity: 0 }}
-      transition={{ duration: 1 }}
-      whileInView={{ y: [-10, 0], opacity: [0, 1] }}
-      viewport={{ once: false }}
-    >
-      <Box borderRadius="lg" overflow="hidden">
-        <Link textDecoration="none" _hover={{ textDecoration: "none" }}>
-          <GatsbyImage image={image} alt={alt} className="scale-up" objectPosition="center" />
-        </Link>
-      </Box>
-    </motion.div>
-  );
-};
-
 const GalleryGrid: FC<GalleryGridProps> = ({ image, gridColumn = 3 }) => {
   const [page, setPage] = useState(1);
   const allImages = image.edges || [];
@@ -60,13 +36,7 @@ const GalleryGrid: FC<GalleryGridProps> = ({ image, gridColumn = 3 }) => {
   const gridRow = Math.ceil(count / gridColumn);
 
   if (!totalCount) {
-    return (
-      <Box textAlign="center" py={10} px={6}>
-        <Heading as="h2" size="md" color={"gray.500"} mt={6} mb={2}>
-          No Result Found.
-        </Heading>
-      </Box>
-    );
+    return <NoDataFound />;
   }
 
   return (
